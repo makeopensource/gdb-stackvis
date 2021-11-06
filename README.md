@@ -10,3 +10,4 @@ This plugin is designed to visually execute the stack through the life of an x86
 
 Nick Brown @bicknrown
 
+Jake Savitt @jakesavi
