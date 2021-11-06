@@ -1,3 +1,4 @@
 class StackData:
-    rbp = 0x0
-    rsp = 0x0
+    def __init__(self, rbp, rsp):
+        self.rbp = rbp
+        self.rsp = rsp
