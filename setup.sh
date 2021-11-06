@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Building"
+echo "Building..."
 
 if  ! hash gdb ; then
 	echo "Could not find gdb in $PATH"
