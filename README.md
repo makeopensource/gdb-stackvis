@@ -10,10 +10,3 @@ A GDB Plugin that visualizes the stack frame while running gdb
 ### Usage
 
 To use the plugin, run gdb, and at any point during execution type `stackviz` to print a visualization of the current stack frame.
-
-### Contributers
-
-* Emil Kovacev @emilkovacev
-* Jake Savitt @jakesavi
-* Nick Brown @bicknrown
-
