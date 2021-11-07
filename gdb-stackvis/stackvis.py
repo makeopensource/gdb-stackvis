@@ -9,10 +9,13 @@ class StackVis (gdb.Command):
 
   def invoke (self, arg, from_tty):
     frame = gdb.newest_frame()
-
+    
     rbp = frame.read_register('rbp')
     rsp = frame.read_register('rsp')
-
+    print(rbp)
+    print(rsp)
+    
+    
     data = StackData(rbp, rsp)
 
     visualize(data)
@@ -23,7 +26,7 @@ class StackData:
         self.rsp = rsp
 
 def visualize(data):
-    height: int = (data.rsp - data.rbp) // 8
+    height: int = int(data.rsp - data.rbp) // 8
     print(height)
     if data.rbp == data.rsp:
         print("No stack data found!")
