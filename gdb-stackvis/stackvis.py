@@ -11,11 +11,11 @@ class StackVis (gdb.Command):
   def invoke (self, arg, from_tty):
     frame = gdb.newest_frame()
 
-    rbp = int(frame.read_register('rbp'))
-    rsp = int(frame.read_register('rsp'))
+    bp = int(frame.read_register('ebp'))
+    sp = int(frame.read_register('esp'))
 
-    print(rbp, rsp)
-    visualize(rbp, rsp)
+    print(bp, sp)
+    visualize(bp, sp)
 
 StackVis()
 
@@ -30,28 +30,30 @@ def fhex(number: int) -> str:
 # generates a stack block
 def block(address: int, ptrs: List[str]=[]) -> str:
     inferiors = gdb.inferiors()[0]
-    # formatted = fhex(inferiors.read_memory(address, 8))
-    formatted = fhex(address)
+    memory: bytes = inferiors.read_memory(address, 4)
+
+    int_mem: int = int.from_bytes(memory, 'little')
+    formatted = fhex(int_mem)
 
     return '\t'*4 + '|' + ' '*(len(formatted)+6) + '|\n' + \
-           '\t'*2 + str.format('0x{:08X}', address) + '\t'*1 + '|' + ' '*3 + fhex(address) + ' '*3 + '|\n' + \
+           '\t'*2 + str.format('0x{:08X}', address) + '\t'*1 + '|' + ' '*3 + formatted + ' '*3 + '|\n' + \
            '\t'*4 + '|' + ' '*(len(formatted)+6) + '|\n' + \
            '\t'*4 + '|' + '-'*(len(formatted)+6) + '|' + \
            ' '.join([f' <-- {x}' for x in ptrs])
 
 
-def visualize(rbp, rsp):
-    height: int = (rsp - rbp)
-    if rbp > rsp or :
+def visualize(bp, sp):
+    height: int = (bp - sp)
+    if bp < sp or bp < 1000 or sp < 1000:
         print("No stack data found!")
-    elif rbp == rsp:
-        print(block(rbp, ptrs=['rbp', 'rsp']))
+    elif bp == sp:
+        print(block(bp, ptrs=['ebp', 'esp']))
     else:
-        for i in range(0,height,8):
+        for i in range(0, height+1, 8):
             if i == 0:
-                print(block(rbp + i, ptrs=['rbp']))
-            elif i == height - 1:
-                print(block(rbp + i, ptrs=['rsp']))
+                print(block(bp - i, ptrs=['ebp']))
+            elif i >= height-1:
+                print(block(bp - i, ptrs=['esp']))
             else:
-                print(block(rbp + i, []))
+                print(block(bp - i, []))
 
