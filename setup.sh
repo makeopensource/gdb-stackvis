@@ -16,16 +16,16 @@ then
 else
 	touch ~/.gdbinit
 fi
-#echo "source gdb-stackvis/stackvis.py" >> ~/.gdbinit # Runs the proper file for execution. If this is inserted into .gdbinit, it will always start.
+#echo "source gdb_stackviz/stackviz.py" >> ~/.gdbinit # Runs the proper file for execution. If this is inserted into .gdbinit, it will always start.
 
 uname -m > check.txt
 if ! grep -q "x86-64" check.txt;then
 	#string manipulate our python file.
-	sed -i 's/.rsp()/.sp()/g' ./gdb-stackvis/stackvis.py #stack pointer variable for Arm systems go here. If they have an alt system. They can edit the python file themselves
+	sed -i 's/esp/rsp/g' ./gdb_stackviz/stackviz.py #stack pointer variable for Arm systems go here. If they have an alt system. They can edit the python file themselves
 	rm check.txt
 fi
-if  ! grep -q "source gdb-stackvis/stackvis.py" ~/.gdbinit;then #checks to see if the string already exists in .gdbinit. If it does DON'T DO IT AGAIN!!
-	echo "source ./gdb-stackvis/stackvis.py" >> ~/.gdbinit 
+if  ! grep -q "source gdb_stackviz/stackviz.py" ~/.gdbinit;then #checks to see if the string already exists in .gdbinit. If it does DON'T DO IT AGAIN!!
+	echo "source ./gdb_stackviz/stackviz.py" >> ~/.gdbinit 
 else
 	echo "Already configured!"
 fi

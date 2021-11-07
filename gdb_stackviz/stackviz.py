@@ -1,23 +1,26 @@
 import gdb
 from typing import List
 
-class StackVis (gdb.Command):
+class StackViz (gdb.Command):
   """Visualize the stack."""
 
   def __init__ (self):
-    super (StackVis, self).__init__ ("stack-vis", gdb.COMMAND_USER)
+    super (StackViz, self).__init__ ("stackviz", gdb.COMMAND_USER)
     
 
   def invoke (self, arg, from_tty):
-    frame = gdb.newest_frame()
+    try:
+        frame = gdb.newest_frame()
 
-    bp = int(frame.read_register('ebp'))
-    sp = int(frame.read_register('esp'))
+        bp = int(frame.read_register('ebp'))
+        sp = int(frame.read_register('esp'))
 
-    print(bp, sp)
-    visualize(bp, sp)
+        visualize(bp, sp)
 
-StackVis()
+    except gdb.error:
+        print('StackViz Error: program stack not initialized')
+
+StackViz()
 
 
 # hex formatter (0x{02X} per byte)
@@ -42,18 +45,24 @@ def block(address: int, ptrs: List[str]=[]) -> str:
            ' '.join([f' <-- {x}' for x in ptrs])
 
 
+
+registers = ['ebp', 'eip', 'esp', 'eax', 'ebx', 'ecx', 'edx', 'edi', 'esi']
+
 def visualize(bp, sp):
-    height: int = (bp - sp)
     if bp < sp or bp < 1000 or sp < 1000:
         print("No stack data found!")
     elif bp == sp:
         print(block(bp, ptrs=['ebp', 'esp']))
     else:
-        for i in range(0, height+1, 8):
-            if i == 0:
-                print(block(bp - i, ptrs=['ebp']))
-            elif i >= height-1:
-                print(block(bp - i, ptrs=['esp']))
-            else:
-                print(block(bp - i, []))
+        for address in range(bp, sp-1, -4):
+            # print(str.format('0x{:08X}', address))
+            ptrs = []
+            frame = gdb.newest_frame()
+            
+            for reg in registers:
+                # print(reg, int(frame.read_register(reg)), address)
+                if int(frame.read_register(reg)) == address:
+                    ptrs.append(reg)
+
+            print(block(address, ptrs))
 
