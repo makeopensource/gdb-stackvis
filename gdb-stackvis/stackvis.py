@@ -15,7 +15,6 @@ class StackVis (gdb.Command):
     rsp = int(frame.read_register('rsp'))
 
     print(rbp, rsp)
-
     visualize(rbp, rsp)
 
 StackVis()
@@ -43,7 +42,6 @@ def block(address: int, ptrs: List[str]=[]) -> str:
 
 def visualize(rbp, rsp):
     height: int = (rsp - rbp)
-    print(height)
     if rbp > rsp or :
         print("No stack data found!")
     elif rbp == rsp:
